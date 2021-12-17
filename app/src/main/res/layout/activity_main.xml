@@ -48,13 +48,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
+    <ImageButton
         android:id="@+id/logoutBtn"
         android:layout_width="35dp"
         android:layout_height="35dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="16dp"
-        android:src="@drawable/ic_baseline_login_24"
+        android:background="@drawable/ic_baseline_login_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
