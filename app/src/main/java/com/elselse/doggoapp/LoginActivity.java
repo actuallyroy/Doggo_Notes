@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,7 +55,8 @@ public class LoginActivity extends Activity {
                 passwordForLogin = findViewById(R.id.password_for_login),
                 nameForSignUp = findViewById(R.id.name_for_signup),
                 userNameForSignUp = findViewById(R.id.username_for_signup),
-                passwordForSignUp = findViewById(R.id.password_for_signup);
+                passwordForSignUp = findViewById(R.id.password_for_signup),
+                confPasswordForSignUp = findViewById(R.id.conf_password_for_signup);
 
 
         loginBtn.setOnClickListener(new View.OnClickListener() {
@@ -91,17 +93,21 @@ public class LoginActivity extends Activity {
             public void onClick(View view) {
                 String name = nameForSignUp.getText().toString(),
                         username = userNameForSignUp.getText().toString(),
-                        password = passwordForSignUp.getText().toString();
+                        password = passwordForSignUp.getText().toString(),
+                        confPass = confPasswordForSignUp.getText().toString();
                 if(name.equals("")){
                     nameForSignUp.setBackground(getDrawable(R.drawable.custom_error_text_field));
                 }
                 if(username.equals("")){
                     userNameForSignUp.setBackground(getDrawable(R.drawable.custom_error_text_field));
                 }
-                if(password.equals("")){
+                if(password.equals("") || !confPass.equals(password)){
                     passwordForSignUp.setBackground(getDrawable(R.drawable.custom_error_text_field));
                 }
-                if(!name.equals("") && !username.equals("") && !password.equals("")){
+                if(confPass.equals("") || !confPass.equals(password)){
+                    confPasswordForSignUp.setBackground(getDrawable(R.drawable.custom_error_text_field));
+                }
+                if(!name.equals("") && !username.equals("") && !password.equals("") && confPass.equals(password)){
                     if(prefs.getString(username+"name","").equals("")) {
                         prefsEditor.putString(username+"name", name);
                         try {
@@ -113,6 +119,7 @@ public class LoginActivity extends Activity {
                         Toast.makeText(getApplicationContext(), "Successfully registered.", Toast.LENGTH_SHORT).show();
                         hideRegView();
                     }else{
+                        userNameForSignUp.setBackground(getDrawable(R.drawable.custom_error_text_field));
                         Toast.makeText(getApplicationContext(), "Username already Exists", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -122,6 +129,7 @@ public class LoginActivity extends Activity {
         linearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("touched", "tou");
                 hideRegView();
             }
         });
@@ -176,6 +184,22 @@ public class LoginActivity extends Activity {
 
             }
         });
+        confPasswordForSignUp.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                confPasswordForSignUp.setBackground(getDrawable(R.drawable.custom_text_field));
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         passwordForLogin.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -195,16 +219,26 @@ public class LoginActivity extends Activity {
                 return false;
             }
         });
+
         createAccTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Drawable customTextField = getDrawable(R.drawable.custom_text_field);
                 signUpView.setAlpha(0f);
                 signUpView.animate().alpha(1f).setDuration(300).start();
                 signUpView.setVisibility(View.VISIBLE);
                 createAccTxt.setClickable(false);
-                nameForSignUp.setBackground(getDrawable(R.drawable.custom_text_field));
-                userNameForSignUp.setBackground(getDrawable(R.drawable.custom_text_field));
-                passwordForSignUp.setBackground(getDrawable(R.drawable.custom_text_field));
+                nameForSignUp.setBackground(customTextField);
+                userNameForSignUp.setBackground(customTextField);
+                passwordForSignUp.setBackground(customTextField);
+                confPasswordForSignUp.setBackground(customTextField);
+            }
+        });
+
+        signUpView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 

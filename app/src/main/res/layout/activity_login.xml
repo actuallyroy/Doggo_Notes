@@ -36,9 +36,11 @@
                 android:background="@drawable/custom_text_field"
                 android:ems="15"
                 android:hint="Username"
+                android:singleLine="true"
                 android:textColor="@color/black"
                 android:textColorHint="@color/gray"
-                android:inputType="textPersonName"
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_."
+                android:inputType="textFilter"
                 android:padding="10dp" />
 
             <EditText
@@ -50,6 +52,7 @@
                 android:ems="15"
                 android:imeOptions="actionDone"
                 android:textColor="@color/black"
+                android:singleLine="true"
                 android:hint="Password"
                 android:textColorHint="@color/gray"
                 android:inputType="textPassword"
@@ -77,14 +80,15 @@
     <LinearLayout
         android:id="@+id/sign_up_view"
         android:layout_width="350dp"
-        android:layout_height="400dp"
+        android:layout_height="450dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:background="@drawable/shadow"
-        android:orientation="vertical"
         android:visibility="invisible"
+        android:orientation="vertical"
+
         android:gravity="center"
 
         android:elevation="20dp">
@@ -108,6 +112,7 @@
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
             android:padding="10dp"
+            android:singleLine="true"
             android:inputType="textPersonName"
             android:layout_margin="10dp"/>
         <EditText
@@ -117,9 +122,11 @@
             android:ems="15"
             android:background="@drawable/custom_text_field"
             android:hint="Username"
+            android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
-            android:inputType="text"
+            android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_."
+            android:inputType="textFilter"
             android:padding="10dp"
             android:layout_margin="10dp"/>
         <EditText
@@ -129,7 +136,22 @@
             android:ems="15"
             android:background="@drawable/custom_text_field"
             android:hint="Password"
+            android:singleLine="true"
             android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:imeOptions="actionDone"
+            android:padding="10dp"
+            android:inputType="textPassword"
+            android:layout_margin="10dp"/>
+        <EditText
+            android:id="@+id/conf_password_for_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:background="@drawable/custom_text_field"
+            android:hint="Confirm password"
+            android:textColor="@color/black"
+            android:singleLine="true"
             android:textColorHint="@color/gray"
             android:imeOptions="actionDone"
             android:padding="10dp"
