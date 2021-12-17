@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".LoginActivity"
+    android:background="@color/white">
+        <LinearLayout
+            android:id="@+id/linearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginTop="30dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:layout_margin="20dp"
+                android:src="@drawable/ic_doggo" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:text="Login"
+                android:textColor="@color/black"
+                android:textSize="40sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/user_name_for_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/custom_text_field"
+                android:ems="15"
+                android:hint="Username"
+                android:textColor="@color/black"
+                android:textColorHint="@color/gray"
+                android:inputType="textPersonName"
+                android:padding="10dp" />
+
+            <EditText
+                android:id="@+id/password_for_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/custom_text_field"
+                android:ems="15"
+                android:imeOptions="actionDone"
+                android:textColor="@color/black"
+                android:hint="Password"
+                android:textColorHint="@color/gray"
+                android:inputType="textPassword"
+                android:padding="10dp" />
+
+            <Button
+                android:id="@+id/login_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/custom_button"
+                android:text="Login"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/create_acc_txt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="40dp"
+                android:padding="10dp"
+                android:text="Don't have any username?"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+        </LinearLayout>
+    <LinearLayout
+        android:id="@+id/sign_up_view"
+        android:layout_width="350dp"
+        android:layout_height="400dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/shadow"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:gravity="center"
+
+        android:elevation="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="40sp"
+            android:layout_margin="30dp"
+            android:text="Sign Up"/>
+
+        <EditText
+            android:id="@+id/name_for_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:background="@drawable/custom_text_field"
+            android:hint="Name"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:padding="10dp"
+            android:inputType="textPersonName"
+            android:layout_margin="10dp"/>
+        <EditText
+            android:id="@+id/username_for_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:background="@drawable/custom_text_field"
+            android:hint="Username"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:inputType="text"
+            android:padding="10dp"
+            android:layout_margin="10dp"/>
+        <EditText
+            android:id="@+id/password_for_signup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="15"
+            android:background="@drawable/custom_text_field"
+            android:hint="Password"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:imeOptions="actionDone"
+            android:padding="10dp"
+            android:inputType="textPassword"
+            android:layout_margin="10dp"/>
+        <Button
+            android:id="@+id/sign_up_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button"
+            android:textColor="@color/white"
+            android:layout_margin="10dp"
+            android:text="SIGN UP"/>
+
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
