@@ -21,6 +21,7 @@ public class SpanActivity extends Activity {
             @Override
             public void run() {
                 startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                overridePendingTransition(0,0);
                 finish();
             }
         }, 2000);

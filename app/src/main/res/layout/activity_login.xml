@@ -11,20 +11,18 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:layout_marginTop="30dp"
             android:orientation="vertical">
 
             <ImageView
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_margin="20dp"
+                android:layout_margin="10dp"
                 android:src="@drawable/ic_doggo" />
 
             <TextView
                 android:id="@+id/textView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:text="Login"
                 android:textColor="@color/black"
                 android:textSize="40sp"
@@ -70,8 +68,8 @@
                 android:id="@+id/create_acc_txt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="40dp"
-                android:padding="10dp"
+                android:layout_margin="60dp"
+                android:padding="20dp"
                 android:text="Don't have any username?"
                 android:textColor="@color/black"
                 android:textStyle="bold" />

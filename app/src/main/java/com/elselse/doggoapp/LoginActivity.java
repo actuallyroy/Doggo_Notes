@@ -44,6 +44,10 @@ public class LoginActivity extends Activity {
         createAccTxt = findViewById(R.id.create_acc_txt);
         signUpView = findViewById(R.id.sign_up_view);
         LinearLayout linearLayout = findViewById(R.id.linearLayout);
+
+        linearLayout.setAlpha(0);
+        linearLayout.setY(linearLayout.getY()-100);
+        linearLayout.animate().alpha(1f).setDuration(1000).yBy(100).start();
         Button loginBtn = findViewById(R.id.login_btn),
                 signUpBtn = findViewById(R.id.sign_up_button);
         EditText userNameForLogin = findViewById(R.id.user_name_for_login),
