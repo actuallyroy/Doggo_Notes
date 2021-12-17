@@ -23,7 +23,7 @@ public class MainActivity extends Activity {
         SharedPreferences.Editor prefsEditor = prefs.edit();
 
         TextView welcomeTxt = findViewById(R.id.wlcmTxt);
-        welcomeTxt.setText("Welcome, "+ prefs.getString(prefs.getString("Logged", "")+"name",""));
+        welcomeTxt.setText(prefs.getString(prefs.getString("Logged", "")+"name",""));
         ConstraintLayout constraintLayout = findViewById(R.id.cL);
         ImageButton logoutButton = findViewById(R.id.logoutBtn);
         logoutButton.setOnClickListener(new View.OnClickListener() {
