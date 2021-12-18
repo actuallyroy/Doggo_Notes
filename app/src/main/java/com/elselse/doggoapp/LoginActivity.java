@@ -116,7 +116,7 @@ public class LoginActivity extends Activity {
                             e.printStackTrace();
                         }
                         prefsEditor.apply();
-                        Toast.makeText(getApplicationContext(), "Successfully registered.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Successfully registered.", Toast.LENGTH_LONG).show();
                         hideRegView();
                     }else{
                         userNameForSignUp.setBackground(getDrawable(R.drawable.custom_error_text_field));
