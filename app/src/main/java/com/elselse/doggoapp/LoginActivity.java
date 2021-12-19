@@ -13,6 +13,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -34,6 +35,14 @@ public class LoginActivity extends Activity {
     TextView createAccTxt;
     SharedPreferences prefs;
     SharedPreferences.Editor prefsEditor;
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        Window window = this.getWindow();
+        window.setStatusBarColor(Color.GRAY);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -210,7 +219,7 @@ public class LoginActivity extends Activity {
                 return true;
             }
         });
-        passwordForSignUp.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        confPasswordForSignUp.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
                 if(i == EditorInfo.IME_ACTION_DONE){

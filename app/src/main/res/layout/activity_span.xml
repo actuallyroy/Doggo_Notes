@@ -4,17 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SpanActivity"
-    android:background="@color/white">
+    android:background="@color/white"
+    tools:context=".SpanActivity">
 
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="275dp"
         android:layout_height="317dp"
+        android:src="@drawable/ic_doggo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:src="@drawable/ic_doggo"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

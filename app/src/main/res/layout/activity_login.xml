@@ -112,6 +112,7 @@
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
             android:padding="10dp"
+            android:imeOptions="actionNext"
             android:singleLine="true"
             android:inputType="textPersonName"
             android:layout_margin="10dp"/>
@@ -123,6 +124,7 @@
             android:background="@drawable/custom_text_field"
             android:hint="Username"
             android:singleLine="true"
+            android:imeOptions="actionNext"
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
             android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890_."
@@ -139,7 +141,7 @@
             android:singleLine="true"
             android:textColor="@color/black"
             android:textColorHint="@color/gray"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:padding="10dp"
             android:inputType="textPassword"
             android:layout_margin="10dp"/>
