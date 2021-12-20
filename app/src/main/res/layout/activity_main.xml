@@ -158,104 +158,184 @@
         android:orientation="vertical"
         android:gravity="center">
         <TextView
+            android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:textSize="20sp"
+            android:textColor="@color/gray"
+            android:textSize="30sp"
             android:text="Add Note"/>
         <EditText
-            android:layout_width="wrap_content"
+            android:id="@+id/titleText"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="40dp"
+            android:layout_marginBottom="5dp"
             android:padding="10dp"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
             android:hint="Title"
             android:background="@drawable/custom_text_field"
             android:ems="12"/>
+
+        <EditText
+            android:id="@+id/descriptionText"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="40dp"
+            android:background="@drawable/custom_text_field"
+            android:ems="12"
+            android:gravity="start|top"
+            android:hint="Discription..."
+            android:inputType="textMultiLine"
+            android:padding="5dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Get reminded?"
-            android:textSize="20sp"/>
+            android:textColor="@color/gray"
+            android:textSize="25sp"/>
         <RadioGroup
+            android:id="@+id/getRemRadioGrp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:paddingBottom="5dp">
-
             <RadioButton
+                android:id="@+id/remRadioBtnOne"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today" />
+                android:textColor="@color/black"
+                android:text="No"
+                android:buttonTint="@color/gray"/>
             <RadioButton
+                android:id="@+id/remRadioBtnTwo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:layout_marginStart="20dp"
+                android:text="Today"
+                android:buttonTint="@color/gray"/>
+            <RadioButton
+                android:id="@+id/remRadioBtnThree"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
-                android:text="Tomorrow"/>
+                android:textColor="@color/black"
+                android:text="Tomorrow"
+                android:buttonTint="@color/gray"/>
         </RadioGroup>
         <EditText
+            android:id="@+id/reminderDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:padding="10dp"
+            android:textSize="20sp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
             android:hint="dd/mm/yyyy HH:MM:SS"
             android:text="19/12/2021 04:27:00 PM"
             android:inputType="datetime"
+            android:visibility="gone"
             android:background="@drawable/custom_text_field" />
         <TextView
+            android:id="@+id/textRepeat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="25sp"
+            android:textColor="@color/gray"
+            android:visibility="gone"
             android:text="Repeat"/>
         <RadioGroup
+            android:id="@+id/repeatRadioGrp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
             <RadioButton
+                android:id="@+id/repeatRadioGrpNoRepeat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:buttonTint="@color/gray"
                 android:text="Don't repeat"/>
             <RadioButton
+                android:id="@+id/repeatRadioGrpDaily"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:textColor="@color/black"
+                android:buttonTint="@color/gray"
                 android:text="Daily"/>
             <RadioButton
+                android:id="@+id/repeatRadioGrpWeekly"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
+                android:textColor="@color/black"
+                android:buttonTint="@color/gray"
                 android:text="Weekly"/>
         </RadioGroup>
 
         <TextView
+            android:id="@+id/textDue"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Due?"
-            android:textSize="20sp"/>
+            android:visibility="gone"
+            android:textColor="@color/gray"
+            android:textSize="25sp"/>
         <RadioGroup
+            android:id="@+id/dueRadioGrp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingBottom="5dp">
+            android:paddingBottom="5dp"
+            android:visibility="gone">
             <RadioButton
+                android:id="@+id/dueRadioGrpNo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Today" />
+                android:textColor="@color/black"
+                android:text="No"
+                android:buttonTint="@color/gray"/>
             <RadioButton
+                android:id="@+id/dueRadioGrpToday"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:buttonTint="@color/gray"
+                android:text="Today" />
+            <RadioButton
+                android:id="@+id/dueRadioGrpTomorrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:textColor="@color/black"
+                android:buttonTint="@color/gray"
                 android:text="Tomorrow"/>
         </RadioGroup>
         <EditText
+            android:id="@+id/dueDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="10dp"
             android:layout_marginBottom="20dp"
             android:inputType="datetime"
+            android:textSize="20sp"
             android:hint="dd/mm/yyyy HH:MM:SS"
             android:text="19/12/2021 04:27:00 PM"
+            android:textColor="@color/black"
+            android:textColorHint="@color/gray"
+            android:visibility="gone"
             android:background="@drawable/custom_text_field"/>
+
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
@@ -271,8 +351,9 @@
                 android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="50dp"
-                android:background="@drawable/ic_done_icon" />
+                android:background="@drawable/ic_done_icon"/>
         </LinearLayout>
+
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
