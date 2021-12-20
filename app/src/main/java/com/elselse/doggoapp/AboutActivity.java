@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
+import android.widget.ScrollView;
+import android.widget.Scroller;
 
 public class AboutActivity extends Activity {
     MediaPlayer mediaPlayer;
@@ -18,6 +20,7 @@ public class AboutActivity extends Activity {
         setContentView(R.layout.activity_about);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ImageView doggoImg = findViewById(R.id.doggoImg);
+
         doggoImg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
