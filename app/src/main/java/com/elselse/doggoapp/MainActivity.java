@@ -9,13 +9,12 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.InputType;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,24 +24,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
-import java.util.Objects;
 
 public class MainActivity extends Activity {
 
     int Red, Green, Blue;
     LinearLayout profileMenu;
     String userName;
-
+    EditText reminderDate, dueDate;
+    boolean inputTimeErr = false;
+    final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
+    String meridian;
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onAttachedToWindow() {
@@ -55,10 +53,36 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        refreshActivity();
+
+        //SharedPreferences
         SharedPreferences prefs = getSharedPreferences("Accounts", MODE_PRIVATE);
         SharedPreferences.Editor prefsEditor = prefs.edit();
+        userName = prefs.getString("Logged", "");
+        String name = prefs.getString(userName+"name","");
+        SharedPreferences notesPrefs = getSharedPreferences(userName+"Notes", MODE_PRIVATE),
+                tasksPrefs = getSharedPreferences(userName+"Tasks", MODE_PRIVATE);
+        SharedPreferences.Editor notesPrefsEdit = notesPrefs.edit(),
+                tasksPrefsEditor = tasksPrefs.edit();
 
+        String colorString = prefs.getString(userName+"Color","000000000");
+        Red = Integer.parseInt(colorString.substring(0,3));
+        Green = Integer.parseInt(colorString.substring(3,6));
+        Blue = Integer.parseInt(colorString.substring(6,9));
+        if(Red == 0 || Green == 0 || Blue == 0){
+            generateRandomColor();
+            prefsEditor.putString(userName+"Color", String.format("%03d", Red)+String.format("%03d", Green)+String.format("%03d", Blue));
+            prefsEditor.apply();
+        }
+        ///////////////////////////////////
+
+        String list = tasksPrefs.getString("List", "");
+        for(String a: list.split(":")) {
+            String task1 = tasksPrefs.getString(a, "");
+            Log.d(a, task1);
+        }
+
+
+        //Views
         profileMenu = findViewById(R.id.profile_menu);
         TextView welcomeTxt = findViewById(R.id.wlcmTxt),
                 userNameTxt = findViewById(R.id.userNameTxt),
@@ -67,14 +91,20 @@ public class MainActivity extends Activity {
                 textDue = findViewById(R.id.textDue),
                 title = findViewById(R.id.title);
 
+        ConstraintLayout constraintLayout = findViewById(R.id.cL);
+
+        ImageButton logoutButton = findViewById(R.id.logoutBtn);
+
         LinearLayout addNote = findViewById(R.id.addNote);
+
         FloatingActionButton fab = findViewById(R.id.fab);
+
         Button doneBtn = findViewById(R.id.doneBtn),
                 cancelBtn = findViewById(R.id.cancel_button);
 
-        EditText reminderDate = findViewById(R.id.reminderDate),
-                dueDate = findViewById(R.id.dueDate),
-                titleText = findViewById(R.id.titleText),
+        reminderDate = findViewById(R.id.reminderDate);
+        dueDate = findViewById(R.id.dueDate);
+        EditText titleText = findViewById(R.id.titleText),
                 descriptionText = findViewById(R.id.descriptionText);
 
         RadioGroup getRemRadioGrp = findViewById(R.id.getRemRadioGrp),
@@ -84,7 +114,10 @@ public class MainActivity extends Activity {
         getRemRadioGrp.check(R.id.remRadioBtnOne);
         repeatRadioGrp.check(R.id.repeatRadioGrpNoRepeat);
         dueRadioGrp.check(R.id.dueRadioGrpNo);
+        /////////////////////////////////
 
+
+        //RadioButtons
         getRemRadioGrp.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int i) {
@@ -94,53 +127,38 @@ public class MainActivity extends Activity {
                     reminderDate.setVisibility(View.GONE);
                     textRepeat.setVisibility(View.GONE);
                     repeatRadioGrp.setVisibility(View.GONE);
-                    textDue.setVisibility(View.GONE);
-                    dueRadioGrp.setVisibility(View.GONE);
-                    dueDate.setVisibility(View.GONE);
+                    //textDue.setVisibility(View.GONE);
+                    //dueRadioGrp.setVisibility(View.GONE);
+                    //dueDate.setVisibility(View.GONE);
                 }else{
                     title.setText("Add Task");
                     descriptionText.setVisibility(View.GONE);
                     reminderDate.setVisibility(View.VISIBLE);
                     textRepeat.setVisibility(View.VISIBLE);
                     repeatRadioGrp.setVisibility(View.VISIBLE);
-                    textDue.setVisibility(View.VISIBLE);
-                    dueRadioGrp.setVisibility(View.VISIBLE);
-                    dueDate.setVisibility(View.VISIBLE);
+                    //textDue.setVisibility(View.VISIBLE);
+                    //dueRadioGrp.setVisibility(View.VISIBLE);
+                    //dueDate.setVisibility(View.VISIBLE);
                     if(i == R.id.remRadioBtnTwo){
-
+                        setTime(1);
+                    }
+                    if(i == R.id.remRadioBtnThree){
+                        setTime(24);
                     }
                 }
             }
         });
-        userName = prefs.getString("Logged", "");
-        String name = prefs.getString(userName+"name","");
+
+        //TextViews
         welcomeTxt.setText(name);
         userNameTxt.setText(name.substring(0,1));
-        String colorString = prefs.getString(userName+"Color","000000000");
-        Log.d("Colors", colorString);
-        Red = Integer.parseInt(colorString.substring(0,3));
-        Green = Integer.parseInt(colorString.substring(3,6));
-        Blue = Integer.parseInt(colorString.substring(6,9));
-        if(Red == 0 || Green == 0 || Blue == 0){
-            generateRandomColor();
-            prefsEditor.putString(userName+"Color", String.format("%03d", Red)+String.format("%03d", Green)+String.format("%03d", Blue));
-            prefsEditor.apply();
-        }
-        Log.d("Red", String.valueOf(Red));
-        Log.d("Blue", String.valueOf(Blue));
-        Log.d("Green", String.valueOf(Green));
         userNameTxt.setTextColor(Color.rgb(Red, Green, Blue));
-        ConstraintLayout constraintLayout = findViewById(R.id.cL);
-        ImageButton logoutButton = findViewById(R.id.logoutBtn);
+        /////////////////////
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 addNote.setVisibility(View.VISIBLE);
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss aa");
-                Date now = new Date();
-                reminderDate.setText(sdf.format(now));
-                dueDate.setText(sdf.format(now));
             }
 
         });
@@ -155,17 +173,50 @@ public class MainActivity extends Activity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        if(getRemRadioGrp.getCheckedRadioButtonId() == R.id.remRadioBtnOne) {
-                            SharedPreferences prefs = getSharedPreferences(userName+"Notes", MODE_PRIVATE);
-                            SharedPreferences.Editor prefsEditor = prefs.edit();
-                            prefsEditor.putString(titleText.getText().toString(), descriptionText.getText().toString());
-                            prefsEditor.apply();
-                            titleText.setText("");
-                            descriptionText.setText("");
-                            getRemRadioGrp.check(R.id.remRadioBtnOne);
+                        if (!titleText.getText().toString().equals("")) {
+                            if (getRemRadioGrp.getCheckedRadioButtonId() == R.id.remRadioBtnOne) {
+                                String n = notesPrefs.getString("List", "");
+                                if (!n.contains(titleText.getText().toString())) {
+                                    notesPrefsEdit.putString(titleText.getText().toString(), titleText.getText().toString() + "::" + descriptionText.getText().toString() + "::" + System.currentTimeMillis());
+                                    notesPrefsEdit.putString("List", n + ":" + titleText.getText().toString());
+                                    notesPrefsEdit.apply();
+                                    titleText.setText("");
+                                    descriptionText.setText("");
+                                    getRemRadioGrp.check(R.id.remRadioBtnOne);
+                                    addNote.setVisibility(View.INVISIBLE);
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Choose another Title for your note", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                String n = tasksPrefs.getString("List", "");
+                                if (!n.contains(titleText.getText().toString()) && !inputTimeErr) {
+                                    String newTask = reminderDate.getText().toString();
+                                    switch (repeatRadioGrp.getCheckedRadioButtonId()) {
+                                        case R.id.repeatRadioGrpNoRepeat:
+                                            newTask = newTask + "::N";
+                                            break;
+                                        case R.id.repeatRadioGrpDaily:
+                                            newTask = newTask + "::D";
+                                            break;
+                                        case R.id.repeatRadioGrpWeekly:
+                                            newTask = newTask + "::W";
+                                            break;
+                                    }
+
+                                    tasksPrefsEditor.putString(titleText.getText().toString(), newTask + "::" + System.currentTimeMillis());
+                                    tasksPrefsEditor.putString("List", n + ":" + titleText.getText().toString());
+                                    tasksPrefsEditor.apply();
+                                    titleText.setText("");
+                                    descriptionText.setText("");
+                                    getRemRadioGrp.check(R.id.remRadioBtnOne);
+                                    addNote.setVisibility(View.INVISIBLE);
+                                } else {
+                                    if(n.contains(titleText.getText().toString()))
+                                        Toast.makeText(getApplicationContext(), "Choose another Title", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
                         drawable.clearColorFilter();
-                        addNote.setVisibility(View.INVISIBLE);
                     }
                 },200);
             }
@@ -193,6 +244,7 @@ public class MainActivity extends Activity {
                         dueDate.setVisibility(View.GONE);
                         titleText.setText("");
                         descriptionText.setText("");
+                        getRemRadioGrp.check(R.id.remRadioBtnOne);
                     }
                 },200);
             }
@@ -242,6 +294,39 @@ public class MainActivity extends Activity {
             }
         });
 
+        reminderDate.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                Drawable noError = getDrawable(R.drawable.custom_text_field),
+                        errorDrawable = getDrawable(R.drawable.custom_error_text_field);
+                try {
+                    Date date = SDF.parse(charSequence.toString()),
+                            now = new Date();
+                    if(now.after(date)){
+                        inputTimeErr = true;
+                        reminderDate.setBackground(errorDrawable);
+                    }else{
+                        reminderDate.setBackground(noError);
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    inputTimeErr = true;
+                    reminderDate.setBackground(errorDrawable);
+                }
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
     }
 
     public void generateRandomColor(){
@@ -271,9 +356,15 @@ public class MainActivity extends Activity {
         }, 300);
     }
 
-    public void refreshActivity(){
-        SharedPreferences preferences = getSharedPreferences(userName+"Notes", MODE_PRIVATE);
-        int i = preferences.getAll().size();
-        Log.d("size", String.valueOf(i));
+
+    public void setTime(int hrsDelay){
+        Date now = new Date();
+        now.setHours(now.getHours()+hrsDelay);
+        String time = SDF.format(now);
+        reminderDate.setText(time.substring(0,time.length()-3));
+        dueDate.setText(time.substring(0,time.length()-3));
+
+        meridian = time.substring(time.length()-2, time.length());
+        Log.d("meridian", meridian);
     }
 }
