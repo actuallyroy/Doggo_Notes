@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">Doggo Notes</string>
     <string name="dataPolicy">
-        This Policy describes the information we process to support our Application and Databases provided by DOGGO PVT.LT. We Currently do not take any type of sensitive or not sensitive information of user, all your data will be secure in your device.
+        This Policy describes the information we process to support our Application and Databases provided by DOGGO PVT.LTD. We Currently do not take any type of sensitive or not sensitive information of user, all your data is secure in your device.
     </string>
-    <string name="about">Our goal is to make digital life little easy and safe. We From Doggo Present you Simple and Advance Notes taking App to take your basis notes on the Go.<br/><br/>
-        Doggo Notes is brand owned by Doggo PVT. Licenced By GitHub and Codded in Android Studio.
+    <string name="about">Our goal is to make digital life easier and safe. We from Doggo present you simple and advance notes taking app to take your basis notes on the go.<br/><br/>
+        Doggo Notes is brand owned by Doggo PVT. licenced by GitHub and codded in Android Studio.
     </string>
 </resources>

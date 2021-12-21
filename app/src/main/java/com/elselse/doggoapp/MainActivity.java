@@ -10,16 +10,21 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.Editable;
+import android.text.Layout;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +35,7 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 public class MainActivity extends Activity {
@@ -37,16 +43,23 @@ public class MainActivity extends Activity {
     int Red, Green, Blue;
     LinearLayout profileMenu;
     String userName;
-    EditText reminderDate, dueDate;
+    EditText reminderDate, dueDate, descriptionText, titleText;
     boolean inputTimeErr = false;
     final SimpleDateFormat SDF = new SimpleDateFormat("dd/MM/yyyy hh:mm aa");
-    String meridian;
+    boolean timeTextClicked = false;
+    LinearLayout taskView, notesView, addNote;
+    SharedPreferences notesPrefs, tasksPrefs;
+    SharedPreferences.Editor notesPrefsEdit, tasksPrefsEditor;
+    Drawable drawable;
+    TextView title, textRepeat, textDue;
+    RadioGroup repeatRadioGrp, dueRadioGrp, getRemRadioGrp;
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
         Window window = this.getWindow();
-        window.setStatusBarColor(Color.GRAY);
+        window.setStatusBarColor(Color.rgb(0,209,187));
     }
 
     @Override
@@ -59,10 +72,11 @@ public class MainActivity extends Activity {
         SharedPreferences.Editor prefsEditor = prefs.edit();
         userName = prefs.getString("Logged", "");
         String name = prefs.getString(userName+"name","");
-        SharedPreferences notesPrefs = getSharedPreferences(userName+"Notes", MODE_PRIVATE),
-                tasksPrefs = getSharedPreferences(userName+"Tasks", MODE_PRIVATE);
-        SharedPreferences.Editor notesPrefsEdit = notesPrefs.edit(),
-                tasksPrefsEditor = tasksPrefs.edit();
+
+        notesPrefs = getSharedPreferences(userName+"Notes", MODE_PRIVATE);
+        tasksPrefs = getSharedPreferences(userName+"Tasks", MODE_PRIVATE);
+        notesPrefsEdit = notesPrefs.edit();
+        tasksPrefsEditor = tasksPrefs.edit();
 
         String colorString = prefs.getString(userName+"Color","000000000");
         Red = Integer.parseInt(colorString.substring(0,3));
@@ -86,16 +100,20 @@ public class MainActivity extends Activity {
         profileMenu = findViewById(R.id.profile_menu);
         TextView welcomeTxt = findViewById(R.id.wlcmTxt),
                 userNameTxt = findViewById(R.id.userNameTxt),
-                aboutBtn = findViewById(R.id.aboutBtn),
-                textRepeat = findViewById(R.id.textRepeat),
-                textDue = findViewById(R.id.textDue),
+                aboutBtn = findViewById(R.id.aboutBtn);
+
+                textDue = findViewById(R.id.textDue);
+                textRepeat = findViewById(R.id.textRepeat);
                 title = findViewById(R.id.title);
 
         ConstraintLayout constraintLayout = findViewById(R.id.cL);
+        ScrollView notesScrollView = findViewById(R.id.notesScrollView);
 
         ImageButton logoutButton = findViewById(R.id.logoutBtn);
 
-        LinearLayout addNote = findViewById(R.id.addNote);
+        addNote = findViewById(R.id.addNote);
+        taskView = findViewById(R.id.taskView);
+        notesView = findViewById(R.id.notesView);
 
         FloatingActionButton fab = findViewById(R.id.fab);
 
@@ -104,17 +122,22 @@ public class MainActivity extends Activity {
 
         reminderDate = findViewById(R.id.reminderDate);
         dueDate = findViewById(R.id.dueDate);
-        EditText titleText = findViewById(R.id.titleText),
-                descriptionText = findViewById(R.id.descriptionText);
 
-        RadioGroup getRemRadioGrp = findViewById(R.id.getRemRadioGrp),
-                repeatRadioGrp = findViewById(R.id.repeatRadioGrp),
-                dueRadioGrp = findViewById(R.id.dueRadioGrp);
+        titleText = findViewById(R.id.titleText);
+        descriptionText = findViewById(R.id.descriptionText);
+
+        getRemRadioGrp = findViewById(R.id.getRemRadioGrp);
+        dueRadioGrp = findViewById(R.id.dueRadioGrp);
+        repeatRadioGrp = findViewById(R.id.repeatRadioGrp);
 
         getRemRadioGrp.check(R.id.remRadioBtnOne);
         repeatRadioGrp.check(R.id.repeatRadioGrpNoRepeat);
         dueRadioGrp.check(R.id.dueRadioGrpNo);
         /////////////////////////////////
+
+        //SetTasks
+        setTasks();
+        setNotes();
 
 
         //RadioButtons
@@ -148,6 +171,9 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        ///////////
+
+        drawable = getDrawable(R.drawable.ic_cancel_icon);
 
         //TextViews
         welcomeTxt.setText(name);
@@ -177,8 +203,13 @@ public class MainActivity extends Activity {
                             if (getRemRadioGrp.getCheckedRadioButtonId() == R.id.remRadioBtnOne) {
                                 String n = notesPrefs.getString("List", "");
                                 if (!n.contains(titleText.getText().toString())) {
-                                    notesPrefsEdit.putString(titleText.getText().toString(), titleText.getText().toString() + "::" + descriptionText.getText().toString() + "::" + System.currentTimeMillis());
-                                    notesPrefsEdit.putString("List", n + ":" + titleText.getText().toString());
+                                    notesPrefsEdit.putString(titleText.getText().toString(), descriptionText.getText().toString() + "::" + System.currentTimeMillis());
+
+                                    if(n.equals(""))
+                                        notesPrefsEdit.putString("List", titleText.getText().toString());
+                                    else
+                                        notesPrefsEdit.putString("List", n + ":" + titleText.getText().toString());
+
                                     notesPrefsEdit.apply();
                                     titleText.setText("");
                                     descriptionText.setText("");
@@ -187,6 +218,7 @@ public class MainActivity extends Activity {
                                 } else {
                                     Toast.makeText(getApplicationContext(), "Choose another Title for your note", Toast.LENGTH_SHORT).show();
                                 }
+                                setTasks();
                             } else {
                                 String n = tasksPrefs.getString("List", "");
                                 if (!n.contains(titleText.getText().toString()) && !inputTimeErr) {
@@ -204,7 +236,11 @@ public class MainActivity extends Activity {
                                     }
 
                                     tasksPrefsEditor.putString(titleText.getText().toString(), newTask + "::" + System.currentTimeMillis());
-                                    tasksPrefsEditor.putString("List", n + ":" + titleText.getText().toString());
+                                    if(n.equals(""))
+                                        tasksPrefsEditor.putString("List", titleText.getText().toString());
+                                    else
+                                        tasksPrefsEditor.putString("List", n + ":" + titleText.getText().toString());
+
                                     tasksPrefsEditor.apply();
                                     titleText.setText("");
                                     descriptionText.setText("");
@@ -215,6 +251,7 @@ public class MainActivity extends Activity {
                                         Toast.makeText(getApplicationContext(), "Choose another Title", Toast.LENGTH_SHORT).show();
                                 }
                             }
+                            setNotes();
                         }
                         drawable.clearColorFilter();
                     }
@@ -225,26 +262,13 @@ public class MainActivity extends Activity {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Drawable drawable = getDrawable(R.drawable.ic_cancel_icon);
                 drawable.setColorFilter(Color.rgb(1,219,197), PorterDuff.Mode.MULTIPLY);
                 view.setBackground(drawable);
                 Handler handler = new Handler();
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        drawable.clearColorFilter();
-                        addNote.setVisibility(View.INVISIBLE);
-                        title.setText("Add Note");
-                        descriptionText.setVisibility(View.VISIBLE);
-                        reminderDate.setVisibility(View.GONE);
-                        textRepeat.setVisibility(View.GONE);
-                        repeatRadioGrp.setVisibility(View.GONE);
-                        textDue.setVisibility(View.GONE);
-                        dueRadioGrp.setVisibility(View.GONE);
-                        dueDate.setVisibility(View.GONE);
-                        titleText.setText("");
-                        descriptionText.setText("");
-                        getRemRadioGrp.check(R.id.remRadioBtnOne);
+                        hideAddNote();
                     }
                 },200);
             }
@@ -291,6 +315,7 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+                hideProfileMenu();
             }
         });
 
@@ -318,6 +343,7 @@ public class MainActivity extends Activity {
                     inputTimeErr = true;
                     reminderDate.setBackground(errorDrawable);
                 }
+                timeTextClicked = false;
 
             }
 
@@ -327,6 +353,43 @@ public class MainActivity extends Activity {
             }
         });
 
+        taskView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideAddNote();
+            }
+        });
+
+        notesScrollView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                hideAddNote();
+            }
+        });
+
+        reminderDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int i = reminderDate.getSelectionStart();
+                if (timeTextClicked) {
+                    if(getRemRadioGrp.getCheckedRadioButtonId() == R.id.remRadioBtnTwo) {
+                        if (reminderDate.getText().toString().contains("AM")) {
+                            reminderDate.setText(reminderDate.getText().toString().replace("AM", "PM"));
+                        } else {
+                            reminderDate.setText(reminderDate.getText().toString().replace("PM", "AM"));
+                        }
+                    }else{
+                        if (reminderDate.getText().toString().contains("AM")) {
+                            reminderDate.setText(reminderDate.getText().toString().replace("AM", "PM"));
+                        } else {
+                            reminderDate.setText(reminderDate.getText().toString().replace("PM", "AM"));
+                        }
+                    }
+                    reminderDate.setSelection(i);
+                }
+                timeTextClicked = true;
+            }
+        });
     }
 
     public void generateRandomColor(){
@@ -361,10 +424,84 @@ public class MainActivity extends Activity {
         Date now = new Date();
         now.setHours(now.getHours()+hrsDelay);
         String time = SDF.format(now);
-        reminderDate.setText(time.substring(0,time.length()-3));
-        dueDate.setText(time.substring(0,time.length()-3));
-
-        meridian = time.substring(time.length()-2, time.length());
-        Log.d("meridian", meridian);
+        reminderDate.setText(time);
+        dueDate.setText(time);
     }
+
+    public void setTasks(){
+        String[] tasks = tasksPrefs.getString("List", "").split(":");
+        taskView.removeAllViews();
+        for (String a : tasks) {
+            if(!a.equals("")) {
+                CheckBox taskCheckBox = new CheckBox(getApplicationContext());
+                LinearLayout.LayoutParams lP = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                taskCheckBox.setLayoutParams(lP);
+                taskCheckBox.setText(a);
+                taskCheckBox.setTextSize(20);
+                taskCheckBox.setPadding(0, 50, 0, 50);
+                taskCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    @Override
+                    public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                        Log.d(a, String.valueOf(b));
+                    }
+                });
+                taskView.addView(taskCheckBox);
+            }
+        }
+    }
+
+    public void setNotes(){
+        String[] notes = notesPrefs.getString("List", "").split(":");
+        Log.d("note", Arrays.toString(notes));
+        Drawable whiteDrawable = getDrawable(R.drawable.white);
+        notesView.removeAllViews();
+        for (String a : notes) {
+            if(!a.equals("")) {
+                EditText noteTitle = new EditText(getApplicationContext()),
+                        noteDescription = new EditText(getApplicationContext());
+                LinearLayout.LayoutParams lP1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                noteTitle.setLayoutParams(lP1);
+                noteTitle.setEnabled(false);
+                noteTitle.setTextSize(25);
+                noteTitle.setText(a);
+                noteTitle.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+                noteTitle.setTextColor(Color.DKGRAY);
+                noteTitle.setBackground(whiteDrawable);
+                noteDescription.setLayoutParams(lP1);
+                noteDescription.setEnabled(false);
+                noteDescription.setPadding(0, 0, 0, 20);
+                noteDescription.setTextSize(20);
+                noteDescription.setTextColor(Color.DKGRAY);
+                noteDescription.setTextAlignment(View.TEXT_ALIGNMENT_TEXT_START);
+                String temp = notesPrefs.getString(a, "");
+                if (temp.length() > 15)
+                    noteDescription.setText(temp.substring(0, temp.length() - 15));
+
+                noteDescription.setBackground(getDrawable(R.drawable.desc_bg));
+                notesView.addView(noteTitle);
+                notesView.addView(noteDescription);
+            }
+        }
+    }
+
+    public void showAddNote(){
+        addNote.setVisibility(View.VISIBLE);
+    }
+
+    public void hideAddNote(){
+        drawable.clearColorFilter();
+        addNote.setVisibility(View.INVISIBLE);
+        title.setText("Add Note");
+        descriptionText.setVisibility(View.VISIBLE);
+        reminderDate.setVisibility(View.GONE);
+        textRepeat.setVisibility(View.GONE);
+        repeatRadioGrp.setVisibility(View.GONE);
+        textDue.setVisibility(View.GONE);
+        dueRadioGrp.setVisibility(View.GONE);
+        dueDate.setVisibility(View.GONE);
+        titleText.setText("");
+        descriptionText.setText("");
+        getRemRadioGrp.check(R.id.remRadioBtnOne);
+    }
+
 }
