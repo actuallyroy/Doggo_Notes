@@ -37,6 +37,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends Activity {
 
@@ -60,6 +61,7 @@ public class MainActivity extends Activity {
         super.onAttachedToWindow();
         Window window = this.getWindow();
         window.setStatusBarColor(Color.rgb(0,209,187));
+
     }
 
     @Override
@@ -89,11 +91,6 @@ public class MainActivity extends Activity {
         }
         ///////////////////////////////////
 
-        String list = tasksPrefs.getString("List", "");
-        for(String a: list.split(":")) {
-            String task1 = tasksPrefs.getString(a, "");
-            Log.d(a, task1);
-        }
 
 
         //Views
@@ -177,7 +174,7 @@ public class MainActivity extends Activity {
 
         //TextViews
         welcomeTxt.setText(name);
-        userNameTxt.setText(name.substring(0,1));
+        userNameTxt.setText(name.substring(0,1).toUpperCase(Locale.ROOT));
         userNameTxt.setTextColor(Color.rgb(Red, Green, Blue));
         /////////////////////
 
@@ -251,6 +248,7 @@ public class MainActivity extends Activity {
                                         Toast.makeText(getApplicationContext(), "Choose another Title", Toast.LENGTH_SHORT).show();
                                 }
                             }
+                            setTasks();
                             setNotes();
                         }
                         drawable.clearColorFilter();
@@ -284,7 +282,7 @@ public class MainActivity extends Activity {
         userNameTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(profileMenu.getVisibility() == View.INVISIBLE) {
+                if(profileMenu.getVisibility() == View.GONE) {
                     showProfileMenu();
                 }else{
                     hideProfileMenu();
@@ -329,13 +327,15 @@ public class MainActivity extends Activity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 Drawable noError = getDrawable(R.drawable.custom_text_field),
                         errorDrawable = getDrawable(R.drawable.custom_error_text_field);
+                String remDateTxt = charSequence.toString();
                 try {
-                    Date date = SDF.parse(charSequence.toString()),
+                    Date date = SDF.parse(remDateTxt),
                             now = new Date();
                     if(now.after(date)){
                         inputTimeErr = true;
                         reminderDate.setBackground(errorDrawable);
                     }else{
+                        inputTimeErr = false;
                         reminderDate.setBackground(noError);
                     }
                 } catch (ParseException e) {
@@ -343,13 +343,13 @@ public class MainActivity extends Activity {
                     inputTimeErr = true;
                     reminderDate.setBackground(errorDrawable);
                 }
+                Log.d("timeTextClicked", String.valueOf(timeTextClicked));
                 timeTextClicked = false;
 
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-
             }
         });
 
@@ -370,27 +370,23 @@ public class MainActivity extends Activity {
         reminderDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                int i = reminderDate.getSelectionStart();
-                if (timeTextClicked) {
-                    if(getRemRadioGrp.getCheckedRadioButtonId() == R.id.remRadioBtnTwo) {
-                        if (reminderDate.getText().toString().contains("AM")) {
-                            reminderDate.setText(reminderDate.getText().toString().replace("AM", "PM"));
-                        } else {
-                            reminderDate.setText(reminderDate.getText().toString().replace("PM", "AM"));
-                        }
-                    }else{
-                        if (reminderDate.getText().toString().contains("AM")) {
-                            reminderDate.setText(reminderDate.getText().toString().replace("AM", "PM"));
-                        } else {
-                            reminderDate.setText(reminderDate.getText().toString().replace("PM", "AM"));
-                        }
-                    }
-                    reminderDate.setSelection(i);
+            int i = reminderDate.getSelectionStart();
+            if(timeTextClicked) {
+                if (reminderDate.getText().toString().contains("AM")) {
+                    reminderDate.setText(reminderDate.getText().toString().replace("AM", "PM"));
+                } else if (reminderDate.getText().toString().contains("PM")) {
+                    reminderDate.setText(reminderDate.getText().toString().replace("PM", "AM"));
+                } else {
+                    reminderDate.setText(reminderDate.getText().toString().replace("A", "").replace("M", "").replace("P", "").trim() + " AM");
+
                 }
-                timeTextClicked = true;
+            }
+            timeTextClicked = true;
+            reminderDate.setSelection(i);
             }
         });
     }
+
 
     public void generateRandomColor(){
         Red = (int) Math.abs(Math.random()*255);
@@ -414,7 +410,7 @@ public class MainActivity extends Activity {
         h.postDelayed(new Runnable() {
             @Override
             public void run() {
-                profileMenu.setVisibility(View.INVISIBLE);
+                profileMenu.setVisibility(View.GONE);
             }
         }, 300);
     }

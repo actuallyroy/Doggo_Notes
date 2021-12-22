@@ -21,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.RequiresApi;
 
 import java.math.BigInteger;
@@ -59,7 +60,9 @@ public class LoginActivity extends Activity {
         linearLayout.setY(linearLayout.getY()-100);
         linearLayout.animate().alpha(1f).setDuration(1000).yBy(100).start();
         Button loginBtn = findViewById(R.id.login_btn),
-                signUpBtn = findViewById(R.id.sign_up_button);
+                signUpBtn = findViewById(R.id.sign_up_button),
+                infoBtn = findViewById(R.id.infoBtn);
+
         EditText userNameForLogin = findViewById(R.id.user_name_for_login),
                 passwordForLogin = findViewById(R.id.password_for_login),
                 nameForSignUp = findViewById(R.id.name_for_signup),
@@ -67,7 +70,12 @@ public class LoginActivity extends Activity {
                 passwordForSignUp = findViewById(R.id.password_for_signup),
                 confPasswordForSignUp = findViewById(R.id.conf_password_for_signup);
 
-
+        infoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), AboutActivity.class));
+            }
+        });
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.M)
             @Override
@@ -118,7 +126,7 @@ public class LoginActivity extends Activity {
                 }
                 if(!name.equals("") && !username.equals("") && !password.equals("") && confPass.equals(password)){
                     if(prefs.getString(username+"name","").equals("")) {
-                        prefsEditor.putString(username+"name", name);
+                        prefsEditor.putString(username+"name", capitalizeEachWord(name));
                         try {
                             prefsEditor.putString(username+"password", toHexString(getSHA(password)));
                         } catch (NoSuchAlgorithmException e) {
@@ -308,6 +316,18 @@ public class LoginActivity extends Activity {
         }
 
         return hexString.toString();
+    }
+
+    public String capitalizeEachWord(String input){
+        StringBuilder result = new StringBuilder();
+        String[] words = input.split(" ");
+        for(int i = 0; i < words.length; i++){
+            if(i < words.length-1)
+                result.append(words[i].substring(0, 1).toUpperCase()).append(words[i].substring(1).toLowerCase()).append(" ");
+            else
+                result.append(words[i].substring(0, 1).toUpperCase()).append(words[i].substring(1).toLowerCase());
+        }
+        return result.toString();
     }
 
 }
